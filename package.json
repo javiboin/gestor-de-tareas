@@ -1,0 +1,26 @@
+{
+  "name": "gestor-de-tareas",
+  "version": "1.0.0",
+  "description": "API Web Tasks Manager",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/javiboin/gestor-de-tareas.git"
+  },
+  "keywords": [
+    "API",
+    "Backend",
+    "Node.js",
+    "Express.Js",
+    "MongoDB"
+  ],
+  "author": "Javiboin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/javiboin/gestor-de-tareas/issues"
+  },
+  "homepage": "https://github.com/javiboin/gestor-de-tareas#readme"
+}
