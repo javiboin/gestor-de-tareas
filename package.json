@@ -4,7 +4,7 @@
   "description": "API Web Tasks Manager",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.js",
+    "start": "nodemon --exec babel-node src/app.js",
     "test": "nodemon src/app.js"
   },
   "repository": {
@@ -29,5 +29,10 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/node": "^7.27.1",
+    "@babel/preset-env": "^7.27.1"
   }
 }
