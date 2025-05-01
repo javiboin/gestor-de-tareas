@@ -17,6 +17,9 @@ app.get('/', (req, res) => {
     res.send('Hola Usuarios! Buenos dias!');
 })
 
+const tasksRoutes = require('./routes/tasks');
+app.use('/tasks', tasksRoutes);
+
 app.listen(port, () =>{
     console.log(`Servidor escuchando en ${url}`);
 });
