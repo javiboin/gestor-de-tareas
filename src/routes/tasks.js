@@ -26,9 +26,8 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const newId = data_tasks.length +1;
     const newTask = { 
-        id: newId, 
+        id: `${data_tasks.length + 1}`, 
         title: req.body.title,
         content: req.body.content
     };
@@ -36,6 +35,15 @@ router.post('/', (req, res) => {
     res.json(newTask);
 });
 
-
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    // encontrar el dato dentro del arreglo
+    const task = data_tasks.findIndex(data => id === data.id );
+    // eliminar objeto de un array
+    if (task !== -1) {
+        data_tasks.splice(task, 1);
+    };
+    res.send(`Producto ID Nro. ${id} eliminado de las base de datos`);
+})
 
 module.exports = router;
