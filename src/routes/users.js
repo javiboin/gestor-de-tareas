@@ -71,7 +71,7 @@ router.delete('/:id', (req, res) => {
         data_users.splice(user, 1);
     };
     
-    res.send(`Producto ID Nro. ${id} eliminado de las base de datos`);
+    res.send(`Usuario ID Nro. ${id} eliminado de las base de datos`);
 });  
 
 module.exports = router;
