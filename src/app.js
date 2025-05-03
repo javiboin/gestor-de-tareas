@@ -20,6 +20,9 @@ app.get('/', (req, res) => {
 const tasksRoutes = require('./routes/tasks');
 app.use('/tasks', tasksRoutes);
 
+const usersRoutes = require('./routes/users');
+app.use('/users', usersRoutes);
+
 app.listen(port, () =>{
     console.log(`Servidor escuchando en ${url}`);
 });
