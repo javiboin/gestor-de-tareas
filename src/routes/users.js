@@ -28,4 +28,17 @@ router.get('/:id', (req, res) => {
     res.json(user); 
 });
 
+router.post('/', (req, res) => {
+    const newUser = { 
+        id: `${data_users.length + 1}`, 
+        username: req.body.username,
+        password: req.body.password,
+        name: req.body.name,
+        birth_date: req.body.birth_date,
+        email: req.body.email
+    };
+    data_users.push(newUser);
+    res.json(newUser);
+});
+
 module.exports = router;
