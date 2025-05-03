@@ -22,4 +22,10 @@ router.get('/', (req, res) => {
     res.json(data_users);
 });  
 
+router.get('/:id', (req, res) => {
+    const { id } = req.params;
+    const user = data_tasks.find(data => id === data.id);
+    res.json(user); 
+});
+
 module.exports = router;
