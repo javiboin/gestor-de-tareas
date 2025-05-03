@@ -35,6 +35,24 @@ router.post('/', (req, res) => {
     res.json(newTask);
 });
 
+router.patch('/:id', (req, res) => {
+    const { id } = req.params;
+    
+    const task_mod = {
+        id: id,
+        title: req.body.title,
+        content: req.body.content
+    };
+
+    // falta modificar el objeto dentro del array
+    const taskIndex = data_tasks.findIndex(data => id === data.id);
+    if (taskIndex !== -1) {
+        data_tasks[taskIndex] = task_mod;
+    };
+
+    res.json(task_mod);  
+});
+
 router.delete('/:id', (req, res) => {
     const { id } = req.params;
     // encontrar el dato dentro del arreglo
