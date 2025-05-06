@@ -1,67 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const controllers = require('../controllers/task');
 
-// creo un array para guardar datos, llevar datos a base de datos
-const data_tasks = [
-    {
-        id: "1", 
-        title: "titulo",
-        content: "contenido"
-    }
-];
-
+// Esto lo puedo mover al app.js
 router.use((req, res, next) => {
     console.log(`Request method: ${req.method}, Request URL: ${req.originalUrl}`);
     next();
 });
 
-router.get('/', (req, res) => {
-    res.json(data_tasks);
-});
+router.get('/', controllers.getAllTasks);
 
-router.get('/:id', (req, res) => {
-    const { id } = req.params;
-    const task = data_tasks.find(data => id === data.id);
-    res.json(task); 
-});
+router.get('/:id', controllers.getTaskById);
 
-router.post('/', (req, res) => {
-    const newTask = { 
-        id: `${data_tasks.length + 1}`, 
-        title: req.body.title,
-        content: req.body.content
-    };
-    data_tasks.push(newTask);
-    res.json(newTask);
-});
+router.post('/', controllers.createTask);
 
-router.patch('/:id', (req, res) => {
-    const { id } = req.params;
-    
-    const task_mod = {
-        id: id,
-        title: req.body.title,
-        content: req.body.content
-    };
+router.patch('/:id', controllers.updateTask);
 
-    // falta modificar el objeto dentro del array
-    const taskIndex = data_tasks.findIndex(data => id === data.id);
-    if (taskIndex !== -1) {
-        data_tasks[taskIndex] = task_mod;
-    };
-
-    res.json(task_mod);  
-});
-
-router.delete('/:id', (req, res) => {
-    const { id } = req.params;
-    // encontrar el dato dentro del arreglo
-    const task = data_tasks.findIndex(data => id === data.id );
-    // eliminar objeto de un array
-    if (task !== -1) {
-        data_tasks.splice(task, 1);
-    };
-    res.send(`Producto ID Nro. ${id} eliminado de las base de datos`);
-})
+router.delete('/:id', controllers.deleteTask);
 
 module.exports = router;
