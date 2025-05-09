@@ -8,14 +8,11 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get('/', controllers.getAllTasks);
-
-router.get('/:id', controllers.getTaskById);
-
-router.post('/', controllers.createTask);
-
-router.patch('/:id', controllers.updateTask);
-
-router.delete('/:id', controllers.deleteTask);
+router
+    .get('/', controllers.getAllTasks)
+    .get('/:id', controllers.getTaskById)
+    .post('/', controllers.createTask)
+    .patch('/:id', controllers.updateTask)
+    .delete('/:id', controllers.deleteTask);
 
 module.exports = router;
