@@ -7,14 +7,11 @@ router.use((req, res, next) => {
     next();
 });  
 
-router.get('/', controllers.getAllUsers); 
-
-router.get('/:id', controllers.getUserById);
-
-router.post('/', controllers.createUser);
-
-router.patch('/:id', controllers.updateUser);
-
-router.delete('/:id', controllers.deleteUser); 
+router
+    .get('/', controllers.getAllUsers)
+    .get('/:id', controllers.getUserById)
+    .post('/', controllers.createUser)
+    .patch('/:id', controllers.updateUser)
+    .delete('/:id', controllers.deleteUser); 
 
 module.exports = router;
