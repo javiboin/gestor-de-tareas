@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 
 const data_users = [
     {
@@ -13,16 +12,46 @@ const data_users = [
 ];
 
 const getAllUsers = (req, res) => {
-    res.json(data_users);
+    try {
+        res.json(data_users);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error al obtener los usuarios' });
+    };
 };
 
 const getUserById = (req, res) => {
-    const { id } = req.params;
-    const user = data_users.find(data => id === data.id);
-    res.json(user); 
+    try {
+        const { id } = req.params;
+        const user = data_users.find(data => id === data.id);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener el usuario' });
+    };
 };
 
 const createUser = (req, res) => {
+    try {
+        if (!req.body.username || !req.body.password || !req.body.name || !req.body.birth_date || !req.body.email) {
+            return res.status(400).json({ message: 'Faltan datos para crear el usuario' });
+        };
+        const existingUser = data_users.find(data => data.username === req.body.username);
+        if (existingUser) {
+            return res.status(400).json({ message: 'Ya existe un usuario con ese nombre de usuario' });
+        };
+        if (req.body.username.length < 5) {
+            return res.status(400).json({ message: 'El nombre de usuario debe tener al menos 5 caracteres' });
+        };
+        if (req.body.password.length < 8) {
+            return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
+        };
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al crear el usuario' });
+    };
+    
     const newUser = { 
         id: `${data_users.length + 1}`, 
         username: req.body.username,
@@ -32,10 +61,24 @@ const createUser = (req, res) => {
         email: req.body.email
     };
     data_users.push(newUser);
-    res.json(newUser);
+    res.status(200).json(newUser);
 };
 
 const updateUser = (req, res) => {
+    try {
+        if (!req.body.username || !req.body.password || !req.body.name || !req.body.birth_date || !req.body.email) {
+            return res.status(400).json({ message: 'Faltan datos para modificar el usuario' });
+        };
+        if (req.body.username.length < 5) {
+            return res.status(400).json({ message: 'El nombre de usuario debe tener al menos 5 caracteres' });
+        };
+        if (req.body.password.length < 8) {
+            return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
+        };
+    }  catch (error) {
+        return res.status(500).json({ message: 'Error al modificar el usuario' });
+    };
+
     const { id } = req.params;
     
     const user_mod = {
@@ -47,24 +90,28 @@ const updateUser = (req, res) => {
         email: req.body.email
     };
 
-    // falta modificar el objeto dentro del array
     const userIndex = data_users.findIndex(data => id === data.id);
     if (userIndex !== -1) {
         data_users[userIndex] = user_mod;
-    };
+    }; 
 
-    res.json(user_mod);  
+    res.status(200).json(user_mod);
 };
 
 const deleteUser = (req, res) => {
-    const { id } = req.params;
-    const user = data_users.findIndex(data => id === data.id );
-    // eliminar objeto de un array
-    if (user !== -1) {
-        data_users.splice(user, 1);
+    try {
+        const { id } = req.params;
+
+        const index = data_users.findIndex(data => id === data.id );
+        if (index === -1) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        };
+
+        data_users.splice(index, 1);
+        res.status(200).json( { message: `Usuario ID Nro. ${id} eliminado de las base de datos` } );
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al eliminar el usuario' });
     };
-    
-    res.send(`Usuario ID Nro. ${id} eliminado de las base de datos`);
 };
 
 module.exports = {

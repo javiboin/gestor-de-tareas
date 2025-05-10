@@ -15,14 +15,16 @@ app.use(express.urlencoded({ extended: true })); // Soporta datos codificados en
 // RUTAS
 app.get('/', (req, res) => {
     res.send('Hola Usuarios! Buenos dias!');
-})
+});
 
+// Rutas de tareas y usuarios
 const tasksRoutes = require('./routes/tasks');
 app.use('/tasks', tasksRoutes);
 
 const usersRoutes = require('./routes/users');
 app.use('/users', usersRoutes);
 
+// iniciar el servidor
 app.listen(port, () =>{
     console.log(`Servidor escuchando en ${url}`);
 });
