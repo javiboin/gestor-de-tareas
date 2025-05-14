@@ -8,6 +8,9 @@ const host = 'http://localhost';
 const port = process.env.PORT || 3000;
 const url = `${host}:${port}`;
 
+const connectDB = require('../src/config/db');
+connectDB();
+
 app.use(cors());
 app.use(express.json()); // Permite trabajar con JSON en las solicitudes
 app.use(express.urlencoded({ extended: true })); // Soporta datos codificados en URL
