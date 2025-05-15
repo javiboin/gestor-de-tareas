@@ -41,12 +41,6 @@ const createTask = (req, res) => {
             return res.status(400).json({ message: 'El título y el contenido no pueden estar vacíos' });
         }; 
 
-        const taskTitle = req.body.title;  
-        const taskExists = TaskModel.findOne({ title: taskTitle });
-        if (taskExists) {
-            return res.status(400).json({ message: 'Ya existe una tarea con ese título' });
-        };
- 
         if (req.body.title.length < 5) {
             return res.status(400).json({ message: 'El título debe tener al menos 5 caracteres' });
         };
@@ -59,21 +53,34 @@ const createTask = (req, res) => {
         if (req.body.content.length > 200) {
             return res.status(400).json({ message: 'El contenido no puede tener más de 200 caracteres' });
         };
+
+        const taskTitle = req.body.title;  
+        TaskModel.findOne({ title: taskTitle })
+            .then(taskExists => {
+                if (taskExists) {
+                    return res.status(400).json({ message: 'Ya existe una tarea con ese título' });
+                };
+                const newTask = { 
+                    title: req.body.title,
+                    content: req.body.content
+                };
+
+                const task = new TaskModel(newTask);
+                task.save()
+                    .then(() => res.status(200).send('Tarea guardada en la base de datos'))
+                    .catch(err => console.error('Error al guardar la tarea en la base de datos:', err));
+            })
+            .catch(err => {
+                console.error('Error al buscar tarea:', err);
+                return res.status(500).json({ message: 'Error interno del servidor' });
+            });
+ 
+        
     } catch (error) {
-        return res.status(500).json({ message: 'Error al crear la TAREA' });
+        return res.status(500).json({ message: 'Error al crear la tarea' });
     }; 
 
-    const newTask = { 
-        title: req.body.title,
-        content: req.body.content
-    };
 
-    const task = new TaskModel(newTask);
-    task.save()
-        .then(() => console.log('Tarea guardada en la base de datos'))
-        .catch(err => console.error('Error al guardar la tarea en la base de datos:', err));
-
-    res.status(200).json(newTask);
 };
 
 const updateTask = (req, res) => {
@@ -102,33 +109,38 @@ const updateTask = (req, res) => {
 
     const { id } = req.params;   
     const task_mod = {
-        id: id,
         title: req.body.title,
         content: req.body.content
     };
 
     TaskModel
         .updateOne({ _id: id }, { $set: task_mod })
-        .then(() => console.log('Tarea modificada en la base de datos'))
+        .then(() => res.status(200).send('Tarea modificada en la base de datos'))
         .catch(err => console.error('Error al modificar la tarea en la base de datos:', err));
- 
-    res.status(200).json(task_mod);
 };
 
 const deleteTask = (req, res) => {
     try {
-        const { id } = req.params;
-
-        const index = data_tasks.findIndex(data => id === data.id);
-        if (index === -1) {
-            return res.status(404).json({ message: 'Tarea no encontrada' });
+        if (!req.params.id) {
+            return res.status(400).json({ message: 'Faltan datos para eliminar la tarea' });
         };
-
-        data_tasks.splice(index, 1);
-        res.status(200).json( { message: `Producto ID Nro. ${id} eliminado de las base de datos` } ); 
+        if (req.params.id.length < 24) {
+            return res.status(400).json({ message: 'El ID de la tarea no es válido' });
+        };
+        if (req.params.id.length > 24) {
+            return res.status(400).json({ message: 'El ID de la tarea no es válido' });
+        };
+        if (req.params.id === '') {
+            return res.status(400).json({ message: 'El ID de la tarea no puede estar vacío' });
+        };
     } catch (error) {
         return res.status(500).json({ message: 'Error al eliminar la tarea' });
-    };
+    }
+
+    TaskModel
+    .deleteOne({ _id: req.params.id })
+    .then(() => res.status(200).json({ message: `Tarea ID Nro. ${req.params.id} eliminada de la base de datos` }))
+    .catch(err => console.error('Error al eliminar la tarea de la base de datos:', err));
 };
 
 module.exports = {
