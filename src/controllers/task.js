@@ -2,11 +2,6 @@ const TaskModel = require('../models/tasks');
 
 // crear Seeders para tener datos de prueba
 const data_tasks = [
-/*     {
-        id: "1", 
-        title: "titulo",
-        content: "contenido"
-    } */
 ];
 
 const getAllTasks = (req, res) => {
@@ -38,15 +33,21 @@ const getTaskById = (req, res) => {
 };
 
 const createTask = (req, res) => {
-    try {
-        if (!req.body.title || !req.body.content) {
+   try {
+         if (!req.body.title || !req.body.content) {
             return res.status(400).json({ message: 'Faltan datos para crear la tarea' });
         };
-        const existingTask = data_tasks.find(data => data.title === req.body.title);
-        if (existingTask) {
+        if (req.body.title === '' || req.body.content === '') {
+            return res.status(400).json({ message: 'El título y el contenido no pueden estar vacíos' });
+        }; 
+
+        const taskTitle = req.body.title;  
+        console.log(taskTitle);
+        const taskExists = TaskModel.findOne({ title: taskTitle });
+        if (taskExists) {
             return res.status(400).json({ message: 'Ya existe una tarea con ese título' });
         };
-
+ 
         if (req.body.title.length < 5) {
             return res.status(400).json({ message: 'El título debe tener al menos 5 caracteres' });
         };
@@ -60,16 +61,14 @@ const createTask = (req, res) => {
             return res.status(400).json({ message: 'El contenido no puede tener más de 200 caracteres' });
         };
     } catch (error) {
-        return res.status(500).json({ message: 'Error al crear la tarea' });
-    };
+        return res.status(500).json({ message: 'Error al crear la TAREA' });
+    }; 
 
     const newTask = { 
         title: req.body.title,
         content: req.body.content
     };
-    data_tasks.push(newTask);
 
-    // Guardar la tarea en la base de datos
     const task = new TaskModel(newTask);
     task.save()
         .then(() => console.log('Tarea guardada en la base de datos'))
