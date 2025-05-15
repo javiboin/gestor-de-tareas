@@ -42,7 +42,6 @@ const createTask = (req, res) => {
         }; 
 
         const taskTitle = req.body.title;  
-        console.log(taskTitle);
         const taskExists = TaskModel.findOne({ title: taskTitle });
         if (taskExists) {
             return res.status(400).json({ message: 'Ya existe una tarea con ese título' });
@@ -94,22 +93,24 @@ const updateTask = (req, res) => {
         if (req.body.content.length > 200) {
             return res.status(400).json({ message: 'El contenido no puede tener más de 200 caracteres' });
         };
+        if (req.body.title === '' || req.body.content === '') {
+            return res.status(400).json({ message: 'El título y el contenido no pueden estar vacíos' });
+        }
     } catch (error) {
         return res.status(500).json({ message: 'Error al modificar la tarea' });
     };
 
-    const { id } = req.params;
-    
+    const { id } = req.params;   
     const task_mod = {
         id: id,
         title: req.body.title,
         content: req.body.content
     };
 
-    const taskIndex = data_tasks.findIndex(data => id === data.id);
-    if (taskIndex !== -1) {
-        data_tasks[taskIndex] = task_mod;
-    };
+    TaskModel
+        .updateOne({ _id: id }, { $set: task_mod })
+        .then(() => console.log('Tarea modificada en la base de datos'))
+        .catch(err => console.error('Error al modificar la tarea en la base de datos:', err));
  
     res.status(200).json(task_mod);
 };
