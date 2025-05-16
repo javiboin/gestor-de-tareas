@@ -1,9 +1,5 @@
 const TaskModel = require('../models/tasks');
 
-// crear Seeders para tener datos de prueba
-const data_tasks = [
-];
-
 const getAllTasks = (req, res) => {
     TaskModel.find()
         .then(tasks => {
@@ -74,13 +70,9 @@ const createTask = (req, res) => {
                 console.error('Error al buscar tarea:', err);
                 return res.status(500).json({ message: 'Error interno del servidor' });
             });
- 
-        
     } catch (error) {
         return res.status(500).json({ message: 'Error al crear la tarea' });
     }; 
-
-
 };
 
 const updateTask = (req, res) => {
@@ -102,21 +94,22 @@ const updateTask = (req, res) => {
         };
         if (req.body.title === '' || req.body.content === '') {
             return res.status(400).json({ message: 'El título y el contenido no pueden estar vacíos' });
-        }
+        };
+
+        const { id } = req.params;   
+        const task_mod = {
+            title: req.body.title,
+            content: req.body.content
+        };
+
+        TaskModel
+            .updateOne({ _id: id }, { $set: task_mod })
+            .then(() => res.status(200).send('Tarea modificada en la base de datos'))
+            .catch(err => console.error('Error al modificar la tarea en la base de datos:', err));
+
     } catch (error) {
         return res.status(500).json({ message: 'Error al modificar la tarea' });
     };
-
-    const { id } = req.params;   
-    const task_mod = {
-        title: req.body.title,
-        content: req.body.content
-    };
-
-    TaskModel
-        .updateOne({ _id: id }, { $set: task_mod })
-        .then(() => res.status(200).send('Tarea modificada en la base de datos'))
-        .catch(err => console.error('Error al modificar la tarea en la base de datos:', err));
 };
 
 const deleteTask = (req, res) => {
@@ -133,14 +126,14 @@ const deleteTask = (req, res) => {
         if (req.params.id === '') {
             return res.status(400).json({ message: 'El ID de la tarea no puede estar vacío' });
         };
+        
+        TaskModel
+            .deleteOne({ _id: req.params.id })
+            .then(() => res.status(200).json({ message: `Tarea ID Nro. ${req.params.id} eliminada de la base de datos` }))
+            .catch(err => console.error('Error al eliminar la tarea de la base de datos:', err));
     } catch (error) {
         return res.status(500).json({ message: 'Error al eliminar la tarea' });
-    }
-
-    TaskModel
-    .deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: `Tarea ID Nro. ${req.params.id} eliminada de la base de datos` }))
-    .catch(err => console.error('Error al eliminar la tarea de la base de datos:', err));
+    };
 };
 
 module.exports = {
