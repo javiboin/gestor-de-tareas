@@ -26,16 +26,17 @@ const getAllUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = data_users.find(data => id === data.id);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al obtener el usuario' });
-    };
+    userModel.findById(req.params.id)
+        .then(user => {
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+            res.status(200).json(user);
+        })
+        .catch(err => {
+            console.error('Error al obtener el usuario de la base de datos:', err);
+            res.status(500).json({ message: 'Error al obtener el usuario de la base de datos' });
+        });
 };
 
 const createUser = (req, res) => {
