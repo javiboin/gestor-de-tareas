@@ -43,9 +43,8 @@ const createUser = (req, res) => {
         if (!req.body.username || !req.body.password || !req.body.name || !req.body.birth_date || !req.body.email) {
             return res.status(400).json({ message: 'Faltan datos para crear el usuario' });
         };
-        const existingUser = data_users.find(data => data.username === req.body.username);
-        if (existingUser) {
-            return res.status(400).json({ message: 'Ya existe un usuario con ese nombre de usuario' });
+        if (req.body.username === '' || req.body.password === '' || req.body.name === '' || req.body.birth_date === '' || req.body.email === '') {
+            return res.status(400).json({ message: 'El nombre de usuario, la contraseña, el nombre, la fecha de nacimiento y el correo electrónico no pueden estar vacíos' });  
         };
         if (req.body.username.length < 5) {
             return res.status(400).json({ message: 'El nombre de usuario debe tener al menos 5 caracteres' });
@@ -53,20 +52,34 @@ const createUser = (req, res) => {
         if (req.body.password.length < 8) {
             return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
         };
+
+        const username = req.body.username;
+        userModel.findOne({ username: username })
+            .then(userExists => {
+                if (userExists) {
+                    return res.status(400).json({ message: 'Ya existe un usuario con ese nombre de usuario' });
+                };
+
+                const newUser = { 
+                    username: req.body.username,
+                    password: req.body.password,
+                    name: req.body.name,
+                    birth_date: req.body.birth_date,
+                    email: req.body.email
+                };
+
+                const user = new userModel(newUser);
+                user.save()
+                    .then(() => res.status(200).send({ message: 'Usuario creado correctamente' }))
+                    .catch(err => console.error('Error al guardar el usuario en la base de datos:', err));
+            })
+            .catch(err => {
+                console.error('Error al verificar el nombre de usuario:', err);
+                return res.status(500).json({ message: 'Error al verificar el nombre de usuario' });
+            });
     } catch (error) {
         return res.status(500).json({ message: 'Error al crear el usuario' });
     };
-    
-    const newUser = { 
-        id: `${data_users.length + 1}`, 
-        username: req.body.username,
-        password: req.body.password,
-        name: req.body.name,
-        birth_date: req.body.birth_date,
-        email: req.body.email
-    };
-    data_users.push(newUser);
-    res.status(200).json(newUser);
 };
 
 const updateUser = (req, res) => {
