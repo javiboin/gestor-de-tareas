@@ -1,23 +1,28 @@
-const express = require('express');
+const userModel = require('../models/users');
 
 const data_users = [
-    {
+/*     {
         id: "1",
         username: "user1",
         password: "password1",
         name: "User One",
         birth_date: "1990-01-01",
         email: "user1@gmail.com"
-    }
+    } */
 ];
 
 const getAllUsers = (req, res) => {
-    try {
-        res.json(data_users);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error al obtener los usuarios' });
-    };
+    userModel.find()
+            .then(users => {
+                if (users.length === 0) {
+                    return res.status(404).json({ message: 'No hay usuarios disponibles' });
+                }
+                res.status(200).json(users);
+            })
+            .catch(err => {
+                console.error('Error al obtener los usuarios de la base de datos:', err);
+                res.status(500).json({ message: 'Error al obtener las tareas de la base de datos' });
+            });
 };
 
 const getUserById = (req, res) => {
