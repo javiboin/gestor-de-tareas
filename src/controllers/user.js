@@ -115,15 +115,17 @@ const updateUser = (req, res) => {
 
 const deleteUser = (req, res) => {
     try {
-        const { id } = req.params;
-
-        const index = data_users.findIndex(data => id === data.id );
-        if (index === -1) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+        if (!req.params.id) {
+            return res.status(400).json({ message: 'Falta el ID del usuario a eliminar' });
         };
-
-        data_users.splice(index, 1);
-        res.status(200).json( { message: `Usuario ID Nro. ${id} eliminado de las base de datos` } );
+        if (req.params.id.length !== 24) {
+            return res.status(400).json({ message: 'El ID del usuario no es válido' });
+        };
+        
+        userModel
+            .deleteOne({ _id: req.params.id })
+            .then(() => res.status(200).json({ message: `Usuario ID Nro. ${req.params.id} eliminada de la base de datos` }))
+            .catch(err => console.error('Error al eliminar el usuario de la base de datos:', err));
     } catch (error) {
         return res.status(500).json({ message: 'Error al eliminar el usuario' });
     };
