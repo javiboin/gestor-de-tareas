@@ -94,27 +94,23 @@ const updateUser = (req, res) => {
         if (req.body.password.length < 8) {
             return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
         };
+
+        const { id } = req.params;
+        const user_mod = {
+            username: req.body.username,
+            password: req.body.password,
+            name: req.body.name,
+            birth_date: req.body.birth_date,
+            email: req.body.email
+        }; 
+
+        userModel
+            .updateOne({ _id: id }, { $set: user_mod })
+            .then(() => res.status(200).send('Usuario modificado en la base de datos'))
+            .catch(err => console.error('Error al modificar la tarea en la base de datos:', err));
     }  catch (error) {
         return res.status(500).json({ message: 'Error al modificar el usuario' });
     };
-
-    const { id } = req.params;
-    
-    const user_mod = {
-        id: id,
-        username: req.body.username,
-        password: req.body.password,
-        name: req.body.name,
-        birth_date: req.body.birth_date,
-        email: req.body.email
-    };
-
-    const userIndex = data_users.findIndex(data => id === data.id);
-    if (userIndex !== -1) {
-        data_users[userIndex] = user_mod;
-    }; 
-
-    res.status(200).json(user_mod);
 };
 
 const deleteUser = (req, res) => {
