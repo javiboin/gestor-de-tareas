@@ -20,6 +20,11 @@ app.get('/', (req, res) => {
     res.send('Hola Usuarios! Buenos dias!');
 });
 
+// Rutas de autenticación
+const loginRoutes = require('./routes/login');
+app.use('/login', loginRoutes);
+
+
 // Rutas de tareas y usuarios
 const tasksRoutes = require('./routes/tasks');
 app.use('/tasks', tasksRoutes);
