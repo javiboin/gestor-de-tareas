@@ -15,6 +15,8 @@ app.use(cors());
 app.use(express.json()); // Permite trabajar con JSON en las solicitudes
 app.use(express.urlencoded({ extended: true })); // Soporta datos codificados en URL
 
+const { authenticateToken } = require('./middlewares/auth');
+
 // RUTAS
 app.get('/', (req, res) => {
     res.send('Hola Usuarios! Buenos dias!');
@@ -27,10 +29,10 @@ app.use('/login', loginRoutes);
 
 // Rutas de tareas y usuarios
 const tasksRoutes = require('./routes/tasks');
-app.use('/tasks', tasksRoutes);
+app.use('/tasks', authenticateToken, tasksRoutes);
 
 const usersRoutes = require('./routes/users');
-app.use('/users', usersRoutes);
+app.use('/users', authenticateToken, usersRoutes);
 
 // iniciar el servidor
 app.listen(port, () =>{
