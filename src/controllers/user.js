@@ -1,16 +1,5 @@
 const userModel = require('../models/users');
 
-const data_users = [
-/*     {
-        id: "1",
-        username: "user1",
-        password: "password1",
-        name: "User One",
-        birth_date: "1990-01-01",
-        email: "user1@gmail.com"
-    } */
-];
-
 const getAllUsers = (req, res) => {
     userModel.find()
             .then(users => {
