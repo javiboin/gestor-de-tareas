@@ -1,4 +1,5 @@
 const userModel = require('../models/users');
+const { hashPassword } = require('../controllers/encoder');
 
 const getAllUsers = (req, res) => {
     userModel.find()
@@ -50,9 +51,10 @@ const createUser = (req, res) => {
                     return res.status(400).json({ message: 'Ya existe un usuario con ese nombre de usuario' });
                 };
 
+                const passwordEncrypted = hashPassword(req.body.password);
                 const newUser = { 
                     username: req.body.username,
-                    password: req.body.password,
+                    password: passwordEncrypted,
                     name: req.body.name,
                     birth_date: req.body.birth_date,
                     email: req.body.email
